@@ -1,0 +1,83 @@
+## @param baseUrl:title=Assistify Basis URL|type=string|required=true|desc=Wird vom Team Assistify mitgeteilt und ist für alle Seiten gleich, auf denen Sie das Macro einbinden.
+## @param topic:title=Thema (optional)|type=string|required=false|desc=Bitte geben Sie hier den Standardwert für das Eingabefeld "Thema" an. Die gestellte Frage wird diesem Thema in Assistify zugeordnet. Bitte beachten Sie, dass das Thema in Assistify bereits existieren sollte/muss.
+## @param title:title=Formularüberschrift (optional)|type=string|required=false|desc=Wird über dem Formular angezeigt (groß).
+## @param subTitle:title=Untertitel (optional)|type=string|required=false|desc=Wird unter der Überschrift angezeigt (klein).
+## @param buttonlabel:title=Senden Label (optional)|type=string|required=false|desc=Text für den Button, mit dem das Formular abgesendet wird.
+## @param formWidth:title=Formular Breite (optional)|type=string|required=false|desc=Breite des Formulars in Pixel (default: '315px')
+## @param inputWidth:title=Eingabe-Breite (optional)|type=string|required=false|desc=Breite der Input Felder in Pixel (default: '260px')
+
+#set($title = $paramtitle)
+#set($subTitle = $paramsubTitle)
+#set($topic = $paramtopic)
+#set($baseUrl = $parambaseUrl)
+#set($buttonlabel = $parambuttonlabel)
+#set($formWidth = $paramformWidth)
+#set($inputWidth = $paraminputWidth)
+## defaults
+#if (!$title)
+  #set ($title = "Fragen Sie einen Kollegen")
+#end
+#if (!$subTitle)
+  #set ($subTitle = "Eine Anfrage richtet sich automatisch an die Experten eines Themas. Eine KI hilft dabei.")
+#end
+#if (!$topic)
+  #foreach($lab in $content.labels)
+    #set ($label = $lab.getDisplayTitle())
+    #if ($label.startsWith("topic|"))
+      #set ($index = $label.indexOf("topic|"))
+      #set ($index = $index + 6)
+      #set ($topic = $label.substring($index))
+    #end
+  #end
+#end
+#if (!$topic)
+  #set ($topic = "")
+#end
+#if (!$buttonlabel)
+  #set ($buttonlabel = "Erstellen")
+#end
+#if (!$formWidth)
+  #set ($formWidth = "315px")
+#end
+#if (!$inputWidth)
+  #set ($inputWidth = "260px")
+#end
+
+    <div style="overflow:auto; display: block; margin: 1px; width: $formWidth; background: #FFF; font-family: Lucida Grande, Tahoma, Arial, Verdana, sans-serif; font-size: small; background: #fff; border: 1px solid #ccc;">
+
+      <h1 style="background-color: #dedede; margin: 0; min-height: 0; padding: 0; text-decoration: none; text-indent: -8000px;"><a>$title</a></h1>
+
+      <form name="assistify" method="GET" action="$baseUrl/create-channel/" target="_blank" style="position: relative; margin: 20px 20px 0; padding: 0 0 20px;">
+        <div class="form_description" style="border-bottom: 1px dotted #ccc; margin: 0 0 1em;">
+    			<h2 style="font-size: 160%; font-weight: 400; margin: 0 0 3px;">$title</h2>
+    			<p style="font-size: 95%; line-height: 130%; margin: 0 0 12px;">$subTitle</p>
+  		  </div>
+
+        <div id="topic-input" style="margin-bottom: 10px;">
+          <label for="topic" style="border: none; color: #222; display: block; font-size: 95%; font-weight: 700; line-height: 150%; padding: 0 0 1px;">Thema</label>
+          <div>
+            <input type="text" placeholder="Wählen Sie das Thema Ihrer Frage aus" id="topic" name="topic" style="padding: 5px; margin: 0; width: $inputWidth; background: none;" value="$topic">
+          </div>
+        </div>
+
+        <div id="title-input" style="margin-bottom: 10px;">
+          <label for="title" style="border: none; color: #222; display: block; font-size: 95%; font-weight: 700; line-height: 150%; padding: 0 0 1px;">Titel</label>
+          <div>
+            <input type="text" placeholder="Ein Name hilft, die Anfrage wieder zu finden" id="title" name="title" style="padding: 5px; margin: 0; width: $inputWidth; background: none;" value="$content.getParent().getTitle()">
+          </div>
+        </div>
+
+        <div id="question-input" style="margin-bottom: 10px;">
+          <label for="question" style="border: none; color: #222; display: block; font-size: 95%; font-weight: 700; line-height: 150%; padding: 0 0 1px;">Frage</label>
+          <div>
+            <input type="text" placeholder="Was möchten Sie wissen?" id="question" name="question" style="padding: 5px; margin: 0;  width: $inputWidth; background: none;">
+          </div>
+        </div>
+
+        <div class="button">
+          <button type="submit" style="margin: 10px 0 20px 0; float: right; display: inline-block; font-size: 120%; padding: 7px;">$buttonlabel</button>
+        </div>
+
+      </form>
+
+    </div>
